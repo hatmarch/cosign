@@ -1,0 +1,67 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Cosign (Sign)",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/cosign",
+            "args": [ "sign", "--fulcio-url", "http://a4ba57f5ed46d4addb830d7f0f138bc4-153017217.ap-southeast-2.elb.amazonaws.com", 
+                "--rekor-url", "http://a489ca8eff72d4efdad8d392e5e50d62-1455921667.ap-southeast-2.elb.amazonaws.com", "-f", "${input:container}" 
+            ],
+            "env": {
+                "COSIGN_EXPERIMENTAL": "1",
+                "SPIFFE_ENDPOINT_SOCKET": "/tmp/spire-stuff/api.sock",
+                "SIGSTORE_CT_LOG_PUBLIC_KEY_FILE": "/tmp/ct-public.pem",
+                //"SIGSTORE_ROOT_FILE": "/tmp/ca-root.pem",
+            }
+        },
+        {
+            "name": "Launch Cosign (Init)",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/cosign",
+            "args": [ "initialize" ],
+            "env": {
+                "COSIGN_EXPERIMENTAL": "1",
+                "SPIFFE_ENDPOINT_SOCKET": "/tmp/spire-stuff/api.sock",
+                //"SIGSTORE_ROOT_FILE": "/tmp/ca-root.pem",
+            }
+        },
+        {
+            "name": "Launch Cosign (Verify)",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/cosign",
+            "args": [ "verify", "--rekor-url", "http://a489ca8eff72d4efdad8d392e5e50d62-1455921667.ap-southeast-2.elb.amazonaws.com", "${input:container}" ],
+            "env": {
+                "COSIGN_EXPERIMENTAL": "1",
+                "SIGSTORE_ROOT_FILE": "/tmp/ca-root.pem",
+ //               "REKOR_SERVER": "http://a489ca8eff72d4efdad8d392e5e50d62-1455921667.ap-southeast-2.elb.amazonaws.com"
+            }
+        },
+        {
+            "name": "Launch Spire Agent",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "/tmp/spire/cmd/spire-agent/main.go",
+//            "args": [ "run", "-config", "/tmp/spire/conf/agent/agent.conf", "-joinToken", "cd34974a-fbfe-4ca1-bdd4-a954cac9203d" ],
+            "args": [ "run", "-config", "/tmp/spire/conf/agent/agent.conf", "-joinToken", "59fa85e5-e989-4b4d-9b7a-ea32e9fd7a39" ],
+        },
+    ],
+    "inputs": [
+        {
+            "id": "container",
+            "type": "promptString",
+            "description": "name of the container to sign",
+            "default": "prod.auto.tfvars"
+        },
+    ]
+}
